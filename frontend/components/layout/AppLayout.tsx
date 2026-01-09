@@ -20,6 +20,8 @@ import {
   Divider,
   useMediaQuery,
   useTheme,
+  alpha,
+  Badge,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -32,20 +34,22 @@ import {
   Logout,
   Notifications,
   AccountCircle,
+  Radar,
+  FlightTakeoff,
 } from '@mui/icons-material';
 import { useAuthStore } from '@/store/authStore';
+import { colors } from '@/theme/theme';
 
-const drawerWidth = 280;
+const drawerWidth = 260;
 
 const menuItems = [
-  { id: '/', label: 'Главная', icon: Home },
-  { id: '/dashboard', label: 'Дашборд', icon: Dashboard },
-  { id: '/flights', label: 'Полёты', icon: Flight },
-  { id: '/monitoring', label: 'Мониторинг', icon: Notifications },
-  { id: '/drones', label: 'Дроны', icon: Flight },
-  { id: '/operators', label: 'Операторы', icon: People },
-  { id: '/analytics', label: 'Аналитика', icon: BarChart },
-  { id: '/account', label: 'Аккаунт', icon: Settings },
+  { id: '/', label: 'Главная', icon: Home, description: 'Проверка условий' },
+  { id: '/dashboard', label: 'Дашборд', icon: Dashboard, description: 'Обзор системы' },
+  { id: '/flights', label: 'Полёты', icon: FlightTakeoff, description: 'Планирование' },
+  { id: '/monitoring', label: 'Мониторинг', icon: Radar, description: 'Активные полёты' },
+  { id: '/drones', label: 'Дроны', icon: Flight, description: 'Управление парком' },
+  { id: '/operators', label: 'Операторы', icon: People, description: 'Команда' },
+  { id: '/analytics', label: 'Аналитика', icon: BarChart, description: 'Статистика' },
 ];
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -76,109 +80,343 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   const drawer = (
-    <Box>
-      <Toolbar
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* Logo Section */}
+      <Box
         sx={{
+          p: 2.5,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          px: 2,
-          minHeight: '64px !important',
+          gap: 1.5,
+          borderBottom: `1px solid ${colors.border.default}`,
         }}
       >
-        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 700, color: 'primary.main' }}>
-          Guardian AI
+        <Box
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: '10px',
+            background: `linear-gradient(135deg, ${colors.accent.primary} 0%, ${colors.accent.secondary} 100%)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: `0 0 20px ${alpha(colors.accent.primary, 0.3)}`,
+          }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 2L4 7V17L12 22L20 17V7L12 2Z"
+              stroke={colors.background.primary}
+              strokeWidth="1.5"
+              fill="none"
+            />
+            <circle cx="12" cy="11" r="3" fill={colors.background.primary} />
+          </svg>
+        </Box>
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              color: colors.text.primary,
+              fontSize: '1rem',
+              lineHeight: 1.2,
+            }}
+          >
+            Guardian AI
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              color: colors.text.muted,
+              fontSize: '0.65rem',
+              letterSpacing: '0.05em',
+            }}
+          >
+            FLIGHT CONTROL
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Navigation */}
+      <Box sx={{ flex: 1, py: 2, overflow: 'auto' }}>
+        <Typography
+          variant="overline"
+          sx={{
+            px: 2.5,
+            py: 1,
+            display: 'block',
+            color: colors.text.muted,
+            fontSize: '0.65rem',
+          }}
+        >
+          Навигация
         </Typography>
-      </Toolbar>
-      <Divider />
-      <List>
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.id;
-          return (
-            <ListItem key={item.id} disablePadding>
-              <ListItemButton
-                selected={isActive}
-                onClick={() => {
-                  router.push(item.id);
-                  if (isMobile) setMobileOpen(false);
-                }}
-                sx={{
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.light',
-                    color: 'primary.main',
-                    '&:hover': {
-                      backgroundColor: 'primary.light',
-                    },
-                    '& .MuiListItemIcon-root': {
-                      color: 'primary.main',
-                    },
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Icon color={isActive ? 'primary' : 'action'} />
-                </ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
+        <List sx={{ px: 1 }}>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.id;
+            return (
+              <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton
+                  selected={isActive}
+                  onClick={() => {
+                    router.push(item.id);
+                    if (isMobile) setMobileOpen(false);
+                  }}
+                  sx={{
+                    borderRadius: 2,
+                    py: 1.25,
+                    px: 2,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': isActive ? {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: 3,
+                      height: '60%',
+                      borderRadius: '0 4px 4px 0',
+                      backgroundColor: colors.accent.primary,
+                      boxShadow: `0 0 10px ${colors.accent.primary}`,
+                    } : {},
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <Icon
+                      sx={{
+                        fontSize: 20,
+                        color: isActive ? colors.accent.primary : colors.text.secondary,
+                        transition: 'color 0.2s ease',
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.label}
+                    secondary={item.description}
+                    primaryTypographyProps={{
+                      fontSize: '0.875rem',
+                      fontWeight: isActive ? 600 : 400,
+                    }}
+                    secondaryTypographyProps={{
+                      fontSize: '0.7rem',
+                      color: colors.text.muted,
+                      sx: { mt: 0.25 },
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Box>
+
+      {/* User Section */}
+      <Box
+        sx={{
+          p: 2,
+          borderTop: `1px solid ${colors.border.default}`,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            p: 1.5,
+            borderRadius: 2,
+            backgroundColor: alpha(colors.accent.primary, 0.05),
+            border: `1px solid ${colors.border.default}`,
+          }}
+        >
+          <Avatar
+            sx={{
+              width: 36,
+              height: 36,
+              bgcolor: colors.accent.secondary,
+              fontSize: '0.875rem',
+              fontWeight: 600,
+            }}
+          >
+            {user?.name?.charAt(0).toUpperCase() || 'U'}
+          </Avatar>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 500,
+                color: colors.text.primary,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {user?.name || 'Пользователь'}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: colors.text.muted,
+                fontSize: '0.7rem',
+              }}
+            >
+              {user?.role === 'admin' ? 'Администратор' : 'Оператор'}
+            </Typography>
+          </Box>
+          <IconButton
+            size="small"
+            onClick={() => router.push('/account')}
+            sx={{
+              color: colors.text.secondary,
+              '&:hover': {
+                color: colors.accent.primary,
+                backgroundColor: alpha(colors.accent.primary, 0.1),
+              },
+            }}
+          >
+            <Settings sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Box>
+      </Box>
     </Box>
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: colors.background.primary }}>
+      {/* Header */}
       <AppBar
         position="fixed"
         sx={{
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
-          zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ gap: 2 }}>
           <IconButton
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
+            sx={{ display: { md: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Планирование полётов дронов
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <IconButton color="inherit">
-              <Notifications />
-            </IconButton>
-            <IconButton onClick={handleMenuOpen} sx={{ p: 0 }}>
-              <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
-                {user?.name.charAt(0).toUpperCase() || 'U'}
-              </Avatar>
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+
+          {/* Status indicator */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              px: 1.5,
+              py: 0.75,
+              borderRadius: '20px',
+              backgroundColor: alpha(colors.safety.green, 0.1),
+              border: `1px solid ${alpha(colors.safety.green, 0.2)}`,
+            }}
+          >
+            <Box
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                backgroundColor: colors.safety.green,
+                boxShadow: `0 0 8px ${colors.safety.green}`,
+                animation: 'pulse-glow 2s ease-in-out infinite',
+              }}
+            />
+            <Typography
+              variant="caption"
+              sx={{
+                color: colors.safety.green,
+                fontSize: '0.7rem',
+                fontWeight: 500,
+              }}
             >
-              <MenuItem onClick={() => { router.push('/account'); handleMenuClose(); }}>
-                <AccountCircle sx={{ mr: 1 }} />
-                Профиль
-              </MenuItem>
-              <Divider />
-              <MenuItem onClick={handleLogout}>
-                <Logout sx={{ mr: 1 }} />
-                Выйти
-              </MenuItem>
-            </Menu>
+              ONLINE
+            </Typography>
           </Box>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          {/* Notifications */}
+          <IconButton
+            sx={{
+              color: colors.text.secondary,
+              '&:hover': {
+                color: colors.accent.primary,
+                backgroundColor: alpha(colors.accent.primary, 0.1),
+              },
+            }}
+          >
+            <Badge
+              badgeContent={3}
+              sx={{
+                '& .MuiBadge-badge': {
+                  backgroundColor: colors.safety.red,
+                  color: colors.background.primary,
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  minWidth: 16,
+                  height: 16,
+                },
+              }}
+            >
+              <Notifications sx={{ fontSize: 22 }} />
+            </Badge>
+          </IconButton>
+
+          {/* User menu */}
+          <IconButton onClick={handleMenuOpen} sx={{ p: 0.5 }}>
+            <Avatar
+              sx={{
+                width: 34,
+                height: 34,
+                bgcolor: colors.accent.secondary,
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                border: `2px solid ${alpha(colors.accent.primary, 0.3)}`,
+              }}
+            >
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            </Avatar>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            sx={{ mt: 1 }}
+          >
+            <Box sx={{ px: 2, py: 1.5, minWidth: 180 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, color: colors.text.primary }}>
+                {user?.name || 'Пользователь'}
+              </Typography>
+              <Typography variant="caption" sx={{ color: colors.text.muted }}>
+                {user?.email || 'user@example.com'}
+              </Typography>
+            </Box>
+            <Divider sx={{ my: 0.5 }} />
+            <MenuItem
+              onClick={() => {
+                router.push('/account');
+                handleMenuClose();
+              }}
+            >
+              <AccountCircle sx={{ mr: 1.5, fontSize: 20, color: colors.text.secondary }} />
+              Профиль
+            </MenuItem>
+            <MenuItem onClick={handleLogout} sx={{ color: colors.safety.red }}>
+              <Logout sx={{ mr: 1.5, fontSize: 20 }} />
+              Выйти
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
+
+      {/* Sidebar */}
       <Box
         component="nav"
         sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
@@ -190,7 +428,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+              backgroundColor: colors.background.secondary,
+              borderRight: `1px solid ${colors.border.default}`,
+            },
           }}
         >
           {drawer}
@@ -199,13 +442,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           variant="permanent"
           sx={{
             display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+              backgroundColor: colors.background.secondary,
+              borderRight: `1px solid ${colors.border.default}`,
+            },
           }}
           open
         >
           {drawer}
         </Drawer>
       </Box>
+
+      {/* Main Content */}
       <Box
         component="main"
         sx={{
@@ -213,6 +463,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           p: 3,
           width: { md: `calc(100% - ${drawerWidth}px)` },
           mt: '64px',
+          minHeight: 'calc(100vh - 64px)',
         }}
       >
         {children}
@@ -220,4 +471,3 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </Box>
   );
 }
-

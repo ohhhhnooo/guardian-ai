@@ -1,19 +1,26 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent, Typography, List, ListItem, ListItemText, Box, Chip } from '@mui/material';
+import { Card, CardContent, Typography, Box, alpha } from '@mui/material';
+import { Air, Thermostat, WaterDrop, Visibility, Cloud } from '@mui/icons-material';
 import { ForecastPoint } from '@/types/domain';
+import { colors } from '@/theme/theme';
 
 interface SafetyDetailsProps {
   weather: ForecastPoint;
 }
 
 export default function SafetyDetails({ weather }: SafetyDetailsProps) {
-  // Простая логика оценки вклада факторов (можно улучшить)
   const calculateFactorImpact = () => {
-    const factors: Array<{ name: string; impact: number; reason: string }> = [];
+    const factors: Array<{
+      name: string;
+      icon: React.ElementType;
+      impact: number;
+      reason: string;
+      color: string;
+    }> = [];
 
-    // Ветер
+    // Wind
     let windImpact = 0;
     if (weather.wind_speed_mps > 15) {
       windImpact = -30;
@@ -27,11 +34,13 @@ export default function SafetyDetails({ weather }: SafetyDetailsProps) {
     }
     factors.push({
       name: 'Ветер',
+      icon: Air,
       impact: windImpact,
-      reason: `${weather.wind_speed_mps.toFixed(1)} м/с (порывы до ${weather.wind_gust_mps.toFixed(1)} м/с)`,
+      reason: `${weather.wind_speed_mps.toFixed(1)} м/с`,
+      color: colors.accent.primary,
     });
 
-    // Температура
+    // Temperature
     let tempImpact = 0;
     if (weather.temp_c < -10 || weather.temp_c > 35) {
       tempImpact = -20;
@@ -42,11 +51,13 @@ export default function SafetyDetails({ weather }: SafetyDetailsProps) {
     }
     factors.push({
       name: 'Температура',
+      icon: Thermostat,
       impact: tempImpact,
       reason: `${weather.temp_c.toFixed(1)}°C`,
+      color: '#ff6b6b',
     });
 
-    // Осадки
+    // Precipitation
     let precipImpact = 0;
     if (weather.precip_mmph > 2) {
       precipImpact = -25;
@@ -57,11 +68,13 @@ export default function SafetyDetails({ weather }: SafetyDetailsProps) {
     }
     factors.push({
       name: 'Осадки',
+      icon: WaterDrop,
       impact: precipImpact,
       reason: `${weather.precip_mmph.toFixed(1)} мм/ч`,
+      color: '#4facfe',
     });
 
-    // Видимость
+    // Visibility
     let visibilityImpact = 0;
     if (weather.visibility_km < 1) {
       visibilityImpact = -30;
@@ -72,65 +85,160 @@ export default function SafetyDetails({ weather }: SafetyDetailsProps) {
     }
     factors.push({
       name: 'Видимость',
+      icon: Visibility,
       impact: visibilityImpact,
       reason: `${weather.visibility_km.toFixed(1)} км`,
+      color: '#a78bfa',
     });
 
-    // Облачность (меньший вклад)
+    // Cloud cover
     let cloudImpact = 0;
     if (weather.cloud_cover_pct > 90) {
       cloudImpact = -5;
     }
     factors.push({
       name: 'Облачность',
+      icon: Cloud,
       impact: cloudImpact,
       reason: `${weather.cloud_cover_pct}%`,
+      color: '#94a3b8',
     });
 
     return factors;
+  };
+
+  const getImpactColor = (impact: number) => {
+    if (impact >= 0) return colors.safety.green;
+    if (impact > -10) return colors.safety.yellow;
+    return colors.safety.red;
   };
 
   const factors = calculateFactorImpact();
 
   return (
     <Card sx={{ height: '100%' }}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-          Детали безопасности
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Вклад факторов в оценку безопасности
-        </Typography>
-        <List>
-          {factors.map((factor, index) => (
-            <ListItem
-              key={index}
-              sx={{
-                bgcolor: 'grey.50',
-                borderRadius: 1,
-                mb: 1,
-                py: 1.5,
-              }}
-            >
-              <ListItemText
-                primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {factor.name}
-                    </Typography>
-                    <Chip
-                      label={factor.impact >= 0 ? `+${factor.impact}` : factor.impact}
-                      size="small"
-                      color={factor.impact >= 0 ? 'success' : factor.impact > -10 ? 'warning' : 'error'}
-                      sx={{ height: 20, fontSize: '0.7rem' }}
-                    />
-                  </Box>
-                }
-                secondary={factor.reason}
-              />
-            </ListItem>
-          ))}
-        </List>
+      <CardContent sx={{ p: 3 }}>
+        {/* Header */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: colors.accent.primary,
+              boxShadow: `0 0 12px ${colors.accent.primary}`,
+            }}
+          />
+          <Typography
+            variant="overline"
+            sx={{
+              color: colors.text.muted,
+              fontSize: '0.65rem',
+            }}
+          >
+            АНАЛИЗ ФАКТОРОВ
+          </Typography>
+        </Box>
+
+        {/* Factors list */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {factors.map((factor, index) => {
+            const Icon = factor.icon;
+            const impactColor = getImpactColor(factor.impact);
+
+            return (
+              <Box
+                key={index}
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  backgroundColor: colors.background.tertiary,
+                  border: `1px solid ${colors.border.default}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.5,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    borderColor: alpha(factor.color, 0.3),
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    p: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: alpha(factor.color, 0.1),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon sx={{ fontSize: 16, color: factor.color }} />
+                </Box>
+
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 500,
+                      color: colors.text.primary,
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    {factor.name}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: colors.text.muted,
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    {factor.reason}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: 1,
+                    backgroundColor: alpha(impactColor, 0.1),
+                    border: `1px solid ${alpha(impactColor, 0.3)}`,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      color: impactColor,
+                    }}
+                  >
+                    {factor.impact >= 0 ? `+${factor.impact}` : factor.impact}
+                  </Typography>
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+
+        {/* Footer */}
+        <Box
+          sx={{
+            mt: 2,
+            pt: 2,
+            borderTop: `1px solid ${colors.border.default}`,
+          }}
+        >
+          <Typography
+            variant="caption"
+            sx={{ color: colors.text.muted, fontSize: '0.7rem' }}
+          >
+            Вклад каждого фактора в итоговый индекс безопасности
+          </Typography>
+        </Box>
       </CardContent>
     </Card>
   );
