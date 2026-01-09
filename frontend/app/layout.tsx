@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ReactNode } from "react";
 import Providers from "./providers";
+import 'leaflet/dist/leaflet.css';
 
 export const metadata: Metadata = {
   title: "Guardian AI – Drone Flight Weather Assistant",
@@ -17,5 +18,3 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
-
-
