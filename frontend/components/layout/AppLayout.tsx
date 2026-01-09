@@ -133,7 +133,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               letterSpacing: '0.05em',
             }}
           >
-            FLIGHT CONTROL
+            ПОГОДНЫЕ УСЛОВИЯ <br />
+            ДЛЯ ДРОНОВ
           </Typography>
         </Box>
       </Box>

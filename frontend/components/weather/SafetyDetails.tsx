@@ -100,7 +100,7 @@ export default function SafetyDetails({ weather }: SafetyDetailsProps) {
       name: 'Облачность',
       icon: Cloud,
       impact: cloudImpact,
-      reason: `${weather.cloud_cover_pct}%`,
+      reason: `${weather.cloud_cover_pct.toFixed(0)}%`,
       color: '#94a3b8',
     });
 

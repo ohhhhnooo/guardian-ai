@@ -18,11 +18,11 @@ export default function MicroclimateMap({ lat, lon, onLocationSelect }: Microcli
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     // Простая трансформация координат (для демо)
     const newLat = lat + (y - rect.height / 2) * 0.01;
     const newLon = lon + (x - rect.width / 2) * 0.01;
-    
+
     setSelectedPoint({ lat: newLat, lon: newLon });
     if (onLocationSelect) {
       onLocationSelect(newLat, newLon);
@@ -45,8 +45,7 @@ export default function MicroclimateMap({ lat, lon, onLocationSelect }: Microcli
             width: '100%',
             height: 400,
             bgcolor: 'grey.100',
-            backgroundImage: 'radial-gradient(circle, #e0e0e0 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
+            backgroundImage: 'url("/assets/map_mock.png")',
             cursor: 'crosshair',
             borderRadius: 2,
             overflow: 'hidden',
@@ -97,4 +96,3 @@ export default function MicroclimateMap({ lat, lon, onLocationSelect }: Microcli
     </Card>
   );
 }
-

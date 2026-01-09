@@ -84,7 +84,7 @@ export default function RouteSummaryCard({ route }: RouteSummaryCardProps) {
         </List>
 
         {route.alternative_routes && route.alternative_routes.length > 0 && (
-          <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+          <Box sx={{ mt: 3, p: 2, bgcolor: '#12181F', borderRadius: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Резервные маршруты: {route.alternative_routes.length}
             </Typography>
@@ -97,4 +97,3 @@ export default function RouteSummaryCard({ route }: RouteSummaryCardProps) {
     </Card>
   );
 }
-
