@@ -15,12 +15,12 @@ const mockForecast = (hours: number): ForecastPoint[] => {
       safetyIndex >= 80 ? "green" : safetyIndex >= 60 ? "yellow" : "red";
     return {
       time: new Date(now + i * 60 * 60 * 1000).toISOString(),
-      temp_c: 0 + Math.sin(i / 2) * 3,
+      temp_c: 3 + Math.random() * 3,
       wind_speed_mps: baseWind,
       wind_gust_mps: baseWind + 2 + Math.random() * 4,
       precip_mmph: Math.max(0, (Math.random() - 0.6) * 2),
       visibility_km: 6 + Math.random() * 4,
-      pressure_hpa: 1000 + Math.random() * 10,
+      pressure_hpa: 760 + Math.random() * 10,
       cloud_cover_pct: 40 + Math.random() * 60,
       safety_index: Math.round(safetyIndex),
       safety_class
@@ -97,5 +97,3 @@ export const getForecast = async (
     safe_windows: deriveSafeWindows(forecast)
   };
 };
-
-

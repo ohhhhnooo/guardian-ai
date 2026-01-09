@@ -5,19 +5,67 @@ const simulateDelay = (ms: number) =>
 
 let drones: Drone[] = [
   {
-    id: "dji_mavic_3_enterprise",
-    name: "Mavic 3 Enterprise",
+    id: "drone_001",
+    name: "Скаут-1",
     model: "DJI Mavic 3 Enterprise",
-    serial_number: "DJI-M3E-001",
+    serial_number: "1ZNBH8K00C0089",
     specs_id: "dji_mavic_3_enterprise",
     status: "active"
   },
   {
-    id: "dji_matrice_300_rtk",
-    name: "Matrice 300 RTK",
+    id: "drone_002",
+    name: "Орион-М300",
     model: "DJI Matrice 300 RTK",
-    serial_number: "DJI-M300-001",
+    serial_number: "1ZNBJ9L00D0134",
     specs_id: "dji_matrice_300_rtk",
+    status: "active"
+  },
+  {
+    id: "drone_003",
+    name: "Инспектор-2",
+    model: "DJI Mavic 3 Thermal",
+    serial_number: "1ZNBH8T00E0067",
+    specs_id: "dji_mavic_3_thermal",
+    status: "active"
+  },
+  {
+    id: "drone_004",
+    name: "Гефест-П",
+    model: "DJI Matrice 30T",
+    serial_number: "1ZNBK2M00F0098",
+    specs_id: "dji_matrice_30t",
+    status: "maintenance"
+  },
+  {
+    id: "drone_005",
+    name: "Стриж-AIR",
+    model: "Autel EVO II Pro",
+    serial_number: "AU7H2K3L00123",
+    specs_id: "autel_evo2_pro",
+    status: "active"
+  },
+  {
+    id: "drone_006",
+    name: "Патруль-7",
+    model: "DJI Inspire 3",
+    serial_number: "1ZNBI3N00G0045",
+    specs_id: "dji_inspire_3",
+    status: "active"
+  },
+  {
+    id: "drone_007",
+    name: "Каскад-Агро",
+    model: "DJI Agras T40",
+    serial_number: "1ZNBA4T00H0022",
+    specs_id: "dji_agras_t40",
+    status: "maintenance"
+  },
+  {
+    id: "drone_008",
+    name: "Разведчик-5",
+    model: "DJI Mini 3 Pro",
+    serial_number: "1ZNBM3P00I0189",
+    specs_id: "dji_mini_3_pro",
     status: "active"
   }
 ];
@@ -25,6 +73,11 @@ let drones: Drone[] = [
 export const getDrones = async (): Promise<Drone[]> => {
   await simulateDelay(300);
   return drones;
+};
+
+export const getDroneById = async (id: string): Promise<Drone | null> => {
+  await simulateDelay(200);
+  return drones.find(d => d.id === id) ?? null;
 };
 
 export const createDrone = async (
@@ -53,5 +106,3 @@ export const deleteDrone = async (id: string): Promise<void> => {
   await simulateDelay(300);
   drones = drones.filter((d) => d.id !== id);
 };
-
-
